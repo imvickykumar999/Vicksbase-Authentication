@@ -22,7 +22,7 @@
 
                 <h1 style="color:red;">
                   <strong>
-                    Open Database
+                    OTP Protected Database
                     <br>
                     <em style="color:green;">See Code on GitHub</em>
                   </strong>
@@ -35,15 +35,31 @@
         </div>
 
         <br><br>
-          <form method="post" action="/converted_yourquotes">
+          <form method="post" action="/converted_vicksbase">
             <div class="alert alert-light" role="alert">
 
-              <div class="alert alert-primary" role="alert">
+              <br>
+              <div class="alert alert-warning" role="alert">
+                <a target="_blank" href="/vicksmail">
+                  <h2 style="color:red;">
+                    <strong>
+                      Click me to <br> Send OTP
+                    </strong>
+                  </h2>
+                </a>
 
+                <br>
+                <input type="text" name="otp" placeholder="Enter OTP"/>
+                <br><br>
+              </div>
+
+              <div class="alert alert-primary" role="alert">
                 <a target="_blank" href="https://api.whatsapp.com/send?phone=918239957923&text=What%20is%20Credential%20to%20write%20quotes?">
                   <h2 style="color:blue;">
                     <strong>
-                      Click me to <br> Ask Vicky, and <br><br> Enter Credentials
+                      Click me to<br>
+                      Ask Vicky, and <br><br>
+                      Enter Credentials
                     </strong>
                   </h2>
                 </a>
@@ -125,7 +141,7 @@
 
                     <br>
                     <div class="alert alert-success" role="alert">
-                      <h1 style="color:red">
+                      <h1 style="color:green">
                         {{subvalues}}
                       </h1>
                     </div>

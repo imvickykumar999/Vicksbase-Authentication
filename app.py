@@ -1,48 +1,68 @@
-from flask import Flask, render_template, Response
-import cv2
+
+from datetime import datetime
+from bson.json_util import dumps
+import requests, os
+from bs4 import BeautifulSoup as bs
+from werkzeug.utils import secure_filename
+from flask import Flask, flash, jsonify, url_for, session, request, redirect, render_template, send_from_directory
+
+txt = open('hideme.txt', "r")
+txtread = txt.read().strip()
+print(txtread, type(txtread))
+
+try:
+    os.mkdir('static/uploads')
+except Exception as e:
+    print(e)
+    pass
 
 app = Flask(__name__)
 
-# camera = cv2.VideoCapture(cv2.CAP_V4L2)  # use 0 for web camera
-# camera = cv2.VideoCapture(-1)  # use 0 for web camera
+@app.route("/")
+def yourquotes():
+    from vicks import crud
+    obj1 = crud.vicks('@Hey_Vicks')
 
-camera = cv2.VideoCapture(0)  # use 0 for web camera
-# camera = cv2.VideoCapture('http://192.168.0.65:8080/video')  # use 0 for web camera
+    data = obj1.pull()
 
-# camera = cv2.VideoCapture('rtsp://freja.hiof.no:1935/rtplive/_definst_/hessdalen03.stream')  # use 0 for web camera
-#  for cctv camera use rtsp://username:password@ip_address:554/user=username_password='password'_channel=channel_number_stream=0.sdp' instead of camera
-# for local webcam use cv2.VideoCapture(0)
+    if data == None:
+        obj1.push()
 
-def gen_frames():  # generate frame by frame from camera
-    while True:
-        # Capture frame-by-frame
-        success, frame = camera.read()  # read the camera frame
-        if not success:
-            break
-        else:
-            ret, buffer = cv2.imencode('.jpg', frame)
-            frame = buffer.tobytes()
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
+    data = obj1.pull()
+    print('------------------------->', data)
+    return render_template("yourquotes.html",
+                           data = data,
+                           )
 
 
-@app.route('/video_feed')
-def video_feed():
-    #Video streaming route. Put this in the src attribute of an img tag
-    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+@app.route('/converted_yourquotes', methods=['POST'])
+def converted_yourquotes():
+    from vicks import crud
 
+    credentials = request.form['credentials']
+    if credentials != '@Hey_Vicks':
+        return render_template("404.html", message = 'Wrong Credentials')
 
-@app.route('/')
-def index():
+    person = request.form['person']
 
-    # from pynput.mouse import Button, Controller
-    # mouse = Controller()
-    # mouse.position = (338, 170)
-    # mouse.click(Button.left, 2)
+    if person == '':
+        obj1 = crud.vicks(credentials)
+    else:
+        obj1 = crud.vicks(credentials, child = person)
 
-    """Video streaming home page."""
-    return render_template('index.html')
+    message = f'''
+    {request.form['message']}
+    '''
+    if message == '':
+        obj1.push()
+    else:
+        obj1.push(message)
 
+    data = obj1.pull()
+    print('------------------------->', data)
+    return render_template("yourquotes.html",
+                           data = data,
+                           )
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,10 +1,7 @@
 
-from datetime import datetime
 from bson.json_util import dumps
 import requests, os
-from bs4 import BeautifulSoup as bs
-from werkzeug.utils import secure_filename
-from flask import Flask, flash, jsonify, url_for, session, request, redirect, render_template, send_from_directory
+from flask import Flask, request, render_template
 
 txt = open('hideme.txt', "r")
 txtread = txt.read().strip()
